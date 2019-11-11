@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { getApi } from '../../Request/request';
 import Person from '../PersonList/Person/person'
+import { connect } from 'react-redux';
+import * as actionTypes from '../../Redux/Actions/ActionType/actionType';
 import './personList.scss';
 
 class PersonList extends Component {
@@ -13,6 +15,7 @@ class PersonList extends Component {
 
     componentDidMount() {
         this.getPersonList();
+        this.props.personListUpdate(["New Data"])
     }
 
     getPersonList = () => {
@@ -24,6 +27,7 @@ class PersonList extends Component {
     }
 
     render() {
+        console.log("redux state", this.props.personList)
         return (
             <div className="container">
                 <h1>Person List</h1>
@@ -33,4 +37,16 @@ class PersonList extends Component {
     }
 }
 
-export default PersonList
+const mapStateToProps = (state) => {
+    return {
+        personList: state.Persons.personList,
+    }
+};
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        personListUpdate: (persons) => dispatch({ type: actionTypes.PERSONS_LIST, payload: { personList: persons } }),
+    }
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PersonList);
