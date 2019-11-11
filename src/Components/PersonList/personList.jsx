@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import { getApi } from '../../Request/request';
-import Person from '../PersonList/Person/person'
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+
+import { getUser } from '../../Redux/Actions/Effects/effects';
+import Person from '../PersonList/Person/person'
 import * as actionTypes from '../../Redux/Actions/ActionType/actionType';
 import './personList.scss';
 
@@ -19,10 +21,10 @@ class PersonList extends Component {
     }
 
     getPersonList = () => {
-        getApi('users/').then((res) => {
-            if (res.status === 200) {
-                this.setState({ personList: res.data })
-            }
+        this.props.getUser((res) => {
+            this.setState({
+                personList: res.data
+            })
         })
     }
 
@@ -44,9 +46,13 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-    return {
-        personListUpdate: (persons) => dispatch({ type: actionTypes.PERSONS_LIST, payload: { personList: persons } }),
-    }
+    return bindActionCreators(
+        {
+            getUser,
+            personListUpdate: (persons) => ({ type: actionTypes.PERSONS_LIST, payload: { personList: persons } })
+        },
+        dispatch,
+    );
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PersonList);

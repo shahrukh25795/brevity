@@ -1,21 +1,19 @@
 import axios from "axios"
+import { baseUrl as baseURL } from '../Constants/contants'
 
-export const getApi = (url) => {
-    return axios({
-        method: 'GET',
-        url: url,
-        responseType: 'json'
-    })
-        .then(res => {
+const requestInstance = axios.create({ baseURL, headers: null });
 
-            //code for handle error
-            console.log(res)
-            return res;
-        })
-        .catch(err => {
-            
-            //code for handle error
-            console.log(err)
-            return err.response
-        });
-}
+requestInstance.interceptors.request.use((config) => {
+    return config;
+},
+    (error) => {
+        return Promise.reject(error);
+    });
+requestInstance.interceptors.response.use((response) => {
+    return response;
+},
+    (error) => {
+        return Promise.reject(error);
+    });
+
+export default requestInstance;
